@@ -8,13 +8,6 @@ olarak oluşturup takip edebileceği, mobil öncelikli bir web uygulaması.
 - **Bilgisayarda:** Klasördeki `index.html` dosyasına çift tıkla. Kurulum gerekmez.
 - **Telefonda:** GitHub Pages'te yayınlanan adresi aç (aşağıya bak).
 
-## GitHub Pages'e yükleme
-
-1. GitHub'da yeni bir **public** depo oluştur (ör. `saglik-randevu`).
-2. Depoda **Add file → Upload files** ile bu klasörün **içindekileri** (`index.html`, `css`, `js`, `README.md`) sürükleyip bırak, **Commit changes** de.
-3. **Settings → Pages** bölümünde *Source* olarak **Deploy from a branch**, dal olarak **main** ve klasör olarak **/ (root)** seç, **Save** de.
-4. Birkaç dakika sonra adres `https://<kullanıcı-adın>.github.io/saglik-randevu/` olur.
-
 ## Test yöneticisi için adres parametreleri
 
 | Parametre | Ne yapar | Ne zaman |
