@@ -1,5 +1,6 @@
-# Sağlık Randevu – BM 433 İnsan-Bilgisayar Etkileşimi projesi
+# Sağlık Randevu Sistemi – İnsan-Bilgisayar Etkileşimi Projesi
 
+Bu proje lisans İnsan - Bilgisayar Etkileşimi dersi kapsamında hazırlanan;
 Genel kullanıcıların hastane randevusunu hızlı, hatasız ve randevunun alındığından emin
 olarak oluşturup takip edebileceği, mobil öncelikli bir web uygulaması.
 
