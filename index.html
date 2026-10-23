@@ -1,0 +1,36 @@
+<!doctype html>
+<html lang="tr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="description" content="BM 433 İnsan-Bilgisayar Etkileşimi dersi için hazırlanmış sağlık randevu arayüzü prototipi.">
+  <meta name="theme-color" content="#ffffff">
+  <title>Sağlık Randevu</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <!-- Ekran okuyuculara durum mesajlarını iletir (ör. "10.30 seçildi") -->
+  <div id="durum" class="visually-hidden" aria-live="polite"></div>
+
+  <div id="app">
+    <!-- Uygulama açılınca bu yazı kaybolur. Kaybolmuyorsa js klasörü yüklenememiştir. -->
+    <p style="font-family: sans-serif; padding: 24px; line-height: 1.5;">
+      Uygulama yükleniyor…<br><br>
+      Bu yazı kaybolmuyorsa: zip dosyasını önce bir klasöre çıkarın (Windows'ta sağ tık → <b>Tümünü ayıkla</b>),
+      sonra çıkan klasördeki <b>index.html</b> dosyasını açın.
+    </p>
+    <noscript>
+      <main class="screen"><p>Bu uygulamayı kullanmak için tarayıcınızda JavaScript'in açık olması gerekir.</p></main>
+    </noscript>
+  </div>
+
+  <!-- Referans mimari: Veri → Uygulama Mantığı → İstek/API → Sonuç/İleti → Kullanıcı Arayüzü -->
+  <script src="js/data.js"></script>
+  <script src="js/storage.js"></script>
+  <script src="js/logic.js"></script>
+  <script src="js/api.js"></script>
+  <script src="js/messages.js"></script>
+  <script src="js/ui.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>
