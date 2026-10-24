@@ -1,13 +1,19 @@
-# Sağlık Randevu Sistemi – İnsan-Bilgisayar Etkileşimi Projesi
+# Sağlık Randevu – BM 433 İnsan-Bilgisayar Etkileşimi projesi
 
-Bu proje lisans "İnsan - Bilgisayar Etkileşimi" dersi kapsamında hazırlanan;
 Genel kullanıcıların hastane randevusunu hızlı, hatasız ve randevunun alındığından emin
-olarak oluşturup takip edebileceği, mobil öncelikli bir web uygulamasıdır.
+olarak oluşturup takip edebileceği, mobil öncelikli bir web uygulaması.
 
 ## Çalıştırma
 
 - **Bilgisayarda:** Klasördeki `index.html` dosyasına çift tıkla. Kurulum gerekmez.
 - **Telefonda:** GitHub Pages'te yayınlanan adresi aç (aşağıya bak).
+
+## GitHub Pages'e yükleme
+
+1. GitHub'da yeni bir **public** depo oluştur (ör. `saglik-randevu`).
+2. Depoda **Add file → Upload files** ile bu klasörün **içindekileri** (`index.html`, `css`, `js`, `README.md`) sürükleyip bırak, **Commit changes** de.
+3. **Settings → Pages** bölümünde *Source* olarak **Deploy from a branch**, dal olarak **main** ve klasör olarak **/ (root)** seç, **Save** de.
+4. Birkaç dakika sonra adres `https://<kullanıcı-adın>.github.io/saglik-randevu/` olur.
 
 ## Test yöneticisi için adres parametreleri
 
@@ -37,7 +43,7 @@ Parametreler işlendikten sonra adres çubuğundan kendiliğinden silinir.
 | F-01 Arama | 02'de yazarken branş ve doktor önerileri; sonuç yoksa açıklama ve tüm branş listesi |
 | F-02 Saat seçimi | Dolu saatler pasif ve “Dolu” yazılı; tamamen dolu günler de pasif |
 | F-03 Onay | 05'te özet, 06'da başarı ekranı; randevu sayfa yenilense de kalır |
-| F-04 İptal | Onay penceresi (“Randevuyu koru” / “Evet, iptal et”) ve 5 saniyelik “Geri al” |
+| F-04 İptal | Onay penceresi (“Randevuyu koru” / “Evet, iptal et”) ve Randevularım ekranından çıkılana kadar görünen “Geri al” (ilk sürümdeki 5 saniyelik süre, uygulama testinden sonra kaldırıldı) |
 | F-05 Hatırlatıcı | “Takvime ekle” 1 gün önce hatırlatmalı `.ics` takvim dosyası indirir |
 | F-06 Geçmiş | Randevularım → Geçmiş sekmesi (Gidildi / İptal edildi) |
 | F-07 Aynı gün aynı branş | Onayda engellenir, mevcut randevu gösterilir |
@@ -47,7 +53,20 @@ Parametreler işlendikten sonra adres çubuğundan kendiliğinden silinir.
 | P-01 Performans | 0,5 sn'yi aşan işlemlerde yüklenme göstergesi |
 | G-01 Gizlilik | İlk açılışta hangi verinin neden tutulduğu açıklanır; tanı/tahlil tutulmaz |
 
+## Sürüm geçmişi (kullanıcı testlerine göre yinelemeler)
+
+| Sürüm | Değişiklik | Dayandığı bulgu |
+| --- | --- | --- |
+| v1 | İlk çalışan sürüm (Figma prototipindeki tasarım) | — |
+| v2 | Ana ekranda “Randevu al” ve “Randevularım” selamlamanın altına alındı; selamlama “Hoş geldiniz” oldu | Prototip testi: K3 alttaki “Randevu al”ı görmedi, K1 duraksadı |
+| v2.1 | “Geri al” için 5 saniyelik süre sınırı kaldırıldı | Uygulama testi: U1 süreye yetişemedi |
+| v3 | Ana ekranda en yakın 3 randevu gösteriliyor; kartlarda “Görüntüle veya iptal et” yazısı var | U2 iptal edeceği randevuyu ana ekranda aradı; U2 ve U3 karta dokunmayı yardımla buldu |
+| v3 | 08'de iptal ve takvim butonları, 04-B ve 05-B'de seçenekler, iptal sonrası “Geri al” ekranın altından mesajın hemen altına alındı | U3 alttaki buton ve bildirimleri yönlendirmeyle buldu (“Ne yapacağım şimdi?”) |
+| v3 | Çakışma mesajının başlığı “Randevunuz oluşturulamadı” oldu, açıklama “Lütfen aşağıdan başka bir saat seçin” ile bitiyor | U3 eski başlığı görünce randevuyu aldığını sandı |
+
 ## Bilinen sınırlamalar
+
+- v3 değişiklikleri ikincil grupla (yaşlı kullanıcılar) yeniden test edilemedi; yalnızca birincil grupla test edildi.
 
 - Gerçek bir hastane sistemine bağlı değildir; doktor ve boş saat bilgileri örnek veridir.
 - Uygulamanın “bugün” kabul ettiği tarih **27 Ekim 2026** olarak sabitlenmiştir; tasarım ve test görevlerindeki tarihlerle tutarlılık için.

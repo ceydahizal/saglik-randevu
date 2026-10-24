@@ -120,6 +120,11 @@ h1[tabindex="-1"]:focus { outline: none; }
 .row[disabled] { background: var(--surface); color: var(--muted); border-color: transparent; }
 
 .stack { display: grid; gap: 10px; margin-top: 16px; }
+.stack-tight { margin-top: 0; }
+.card-action { margin-top: 6px; color: var(--primary); font-weight: 700; font-size: 0.9375rem; }
+.actions { margin-top: 16px; }
+.actions .btn-secondary { margin-top: 10px; }
+.banner-done { background: #e8f3f4; border: 2px solid var(--primary); }
 
 .tag {
   display: inline-block; margin-left: 8px; padding: 1px 8px; border-radius: 999px;

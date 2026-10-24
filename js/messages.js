@@ -27,10 +27,12 @@
     var ex = e.existing;
     switch (e.code) {
       case "SLOT_TAKEN":
+        // v3: U3 eski başlığı ("Bu saat artık boş değil") görünce randevuyu aldığını sandı.
+        // Başlık artık sonucu söylüyor, açıklama ne yapılacağıyla bitiyor.
         return {
-          title: "Bu saat artık boş değil",
-          text: "Bu sizin hatanız değil: siz onaylarken başka biri " + (ctx.time || "bu") +
-            " saatini aldı. Randevunuz oluşturulmadı."
+          title: "Randevunuz oluşturulamadı",
+          text: "Siz onaylarken " + (ctx.time || "seçtiğiniz") + " saatini başka biri aldı. Bu sizin hatanız değil. " +
+            "Lütfen aşağıdan başka bir saat seçin."
         };
       case "SAME_BRANCH_SAME_DAY":
         return {

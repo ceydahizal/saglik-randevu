@@ -87,12 +87,15 @@
     var status = "";
     if (a.status === "iptal") status = '<span class="tag">İptal edildi</span>';
     else if (opts.past) status = '<span class="tag">Gidildi</span>';
+    // v3: yaşlı katılımcılar kartın dokunulabilir olduğunu anlamadı (U2, U3); eylem yazıyla belirtiliyor
+    var action = a.isUpcoming ? "Görüntüle veya iptal et" : "Ayrıntıları görüntüle";
     return '<button type="button" class="card card-link" data-go="#/randevu/' + esc(a.id) + '">' +
       '<span class="card-body">' +
       '<span class="card-title">' + esc(a.branchName) + status + '</span>' +
       '<span class="card-line">' + esc(a.doctorName) + '</span>' +
       '<span class="card-line strong">' + esc(F.dateTime(a.date, a.time)) + '</span>' +
       '<span class="card-line muted">' + esc(a.hospital) + '</span>' +
+      '<span class="card-action">' + action + '</span>' +
       '</span>' + ICON.chevron + '</button>';
   }
 
@@ -140,15 +143,20 @@
     Promise.all([load(api.getProfile(), token), load(api.listAppointments(), token)]).then(function (r) {
       var profile = r[0].data, list = r[1];
       if (!list.ok) return fatal(list.error);
-      var next = list.data.upcoming[0];
       // v2 (prototip testi sonrası): "Randevu al" ekranın altında fark edilmediği için
       // (K3 göremedi, K1 duraksadı) iki ana işlem selamlamanın hemen altına alındı.
+      // v3 (uygulama testi sonrası): U2 iptal edeceği randevuyu ana ekranda aradı;
+      // artık en yakın 3 randevu gösteriliyor.
+      var upcoming = list.data.upcoming;
+      var shown = upcoming.slice(0, 3);
       var html =
         '<header class="top"><h1 tabindex="-1" class="greeting">Hoş geldiniz</h1></header>' +
         '<button type="button" class="btn btn-primary btn-hero" data-go="#/brans">Randevu al</button>' +
         '<button type="button" class="btn btn-secondary" data-go="#/randevular">Randevularım</button>' +
-        '<h2 class="section-label">Yaklaşan randevunuz</h2>' +
-        (next ? apptCard(next) : '<p class="card card-empty">' + T.noUpcoming + '</p>') +
+        '<h2 class="section-label">Yaklaşan randevularınız</h2>' +
+        (shown.length ? '<div class="stack stack-tight">' + shown.map(function (a) { return apptCard(a); }).join("") + '</div>'
+          : '<p class="card card-empty">' + T.noUpcoming + '</p>') +
+        (upcoming.length > 3 ? '<button type="button" class="btn btn-secondary" data-go="#/randevular">Tüm randevularım (' + upcoming.length + ')</button>' : "") +
         (profile.privacyNoticeSeen ? "" :
           '<section class="banner banner-info" aria-labelledby="gizlilik-baslik"><div>' +
           '<h2 class="banner-title" id="gizlilik-baslik">' + T.privacyTitle + '</h2><p>' + T.privacyBody + '</p>' +
@@ -279,12 +287,14 @@
         return paint(screen(html, '<button type="button" class="btn btn-primary" data-go="#/doktor/' + esc(d.branch.id) + '">Başka doktor seç</button>'));
       }
       html += banner("info", "Bu hafta boş saat bulunmuyor",
-          d.doctor.name + " için en yakın boş gün " + F.dateLong(earliest) + ".");
-      var bottom =
-        '<button type="button" class="btn btn-secondary" data-go="#/doktor/' + esc(d.branch.id) + '">Başka doktor seç</button>' +
+          d.doctor.name + " için en yakın boş gün " + F.dateLong(earliest) + ". Ne yapmak istediğinizi seçin:");
+      // v3: U3 alttaki seçenekleri fark etmedi ("Ne yapacağım şimdi?"); seçenekler mesajın hemen altında
+      html += '<div class="actions">' +
         '<button type="button" class="btn btn-primary" data-go="#/tarih/' + esc(doctorId) + '?gun=' + esc(earliest) + '">' +
-        esc(F.dayMonth(earliest) + " " + F.dayName(earliest)) + ' gününe bak</button>';
-      paint(screen(html, bottom));
+        esc(F.dayMonth(earliest) + " " + F.dayName(earliest)) + ' gününe bak</button>' +
+        '<button type="button" class="btn btn-secondary" data-go="#/doktor/' + esc(d.branch.id) + '">Başka doktor seç</button>' +
+        '</div>';
+      paint(screen(html));
     });
   }
 
@@ -365,9 +375,9 @@
       } else {
         html += '<p class="note">Bu gün için başka boş saat kalmadı.</p>';
       }
-      html += '<p class="context">' + esc(s.branchName + " - " + s.doctorName + ", " + F.dateLong(s.date)) + '</p>';
-      bottom = '<button type="button" class="btn btn-secondary" data-go="' + esc(back) + '">Başka gün seç</button>';
-      return paint(screen(html, bottom), ".banner");
+      html += '<p class="context">' + esc(s.branchName + " - " + s.doctorName + ", " + F.dateLong(s.date)) + '</p>' +
+        '<div class="actions"><button type="button" class="btn btn-secondary" data-go="' + esc(back) + '">Başka gün seç</button></div>';
+      return paint(screen(html), ".banner");
     }
 
     if (problem) {
@@ -424,7 +434,13 @@
       if (!res.ok) return fatal(res.error);
       var past = tab === "gecmis";
       var items = past ? res.data.past : res.data.upcoming;
-      var html = header({ back: "#/", title: "Randevularım" }) +
+      // v3: "Geri al" bildirimi ekranın altında fark edilmedi (U3); listenin üstünde gösteriliyor
+      var undoBanner = state.undo
+        ? '<section class="banner banner-done" role="status"><div><h2 class="banner-title">' + T.cancelled + '</h2>' +
+          '<p>Yanlışlıkla iptal ettiyseniz geri alabilirsiniz.</p>' +
+          '<div class="banner-actions"><button type="button" class="btn btn-primary btn-small" data-action="undo">Geri al</button></div></div></section>'
+        : "";
+      var html = header({ back: "#/", title: "Randevularım" }) + undoBanner +
         '<div class="tabs" role="tablist" aria-label="Randevu listesi">' +
         '<button type="button" role="tab" class="tab' + (past ? "" : " is-on") + '" aria-selected="' + !past + '" data-action="tab" data-tab="yaklasan">Yaklaşan</button>' +
         '<button type="button" role="tab" class="tab' + (past ? " is-on" : "") + '" aria-selected="' + past + '" data-action="tab" data-tab="gecmis">Geçmiş</button>' +
@@ -432,11 +448,7 @@
         (items.length ? items.map(function (a) { return apptCard(a, { past: past }); }).join("")
           : '<p class="card card-empty">' + (past ? T.noPast : T.noUpcoming) + '</p>') +
         '</div>';
-      var snack = state.undo
-        ? '<div class="snackbar" role="status"><span>' + T.cancelled + '</span>' +
-          '<button type="button" class="snackbar-btn" data-action="undo">Geri al</button></div>'
-        : "";
-      paint(screen(html, snack + '<button type="button" class="btn btn-primary" data-go="#/brans">Randevu al</button>'));
+      paint(screen(html, '<button type="button" class="btn btn-primary" data-go="#/brans">Randevu al</button>'));
     });
   }
 
@@ -449,12 +461,14 @@
       var isActive = a.isUpcoming;
       var html = header({ back: "#/randevular" + (isActive ? "" : "?sekme=gecmis"), title: "Randevu Detayı" }) +
         (a.status === "iptal" ? '<p class="context"><span class="tag">İptal edildi</span></p>' : "") +
-        summaryList(a) + '<p class="note" id="takvim-durum" role="status"></p>';
-      var bottom = isActive
-        ? '<button type="button" class="btn btn-secondary" data-action="calendar" data-id="' + esc(a.id) + '">Takvime ekle</button>' +
-          '<button type="button" class="btn btn-outline" data-action="ask-cancel" data-id="' + esc(a.id) + '">Randevuyu iptal et</button>'
-        : '<button type="button" class="btn btn-primary" data-go="#/brans">Yeni randevu al</button>';
-      paint(screen(html, bottom));
+        summaryList(a);
+      // v3: U3 alttaki "Randevuyu iptal et"i fark etmedi; eylemler özetin hemen altında
+      html += '<div class="actions">' + (isActive
+        ? '<button type="button" class="btn btn-outline" data-action="ask-cancel" data-id="' + esc(a.id) + '">Randevuyu iptal et</button>' +
+          '<button type="button" class="btn btn-secondary" data-action="calendar" data-id="' + esc(a.id) + '">Takvime ekle</button>'
+        : '<button type="button" class="btn btn-primary" data-go="#/brans">Yeni randevu al</button>') +
+        '</div><p class="note" id="takvim-durum" role="status"></p>';
+      paint(screen(html));
       detailScreen.current = a;
     });
   }
