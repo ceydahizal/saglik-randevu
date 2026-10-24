@@ -1,8 +1,8 @@
 # Sağlık Randevu Sistemi – İnsan-Bilgisayar Etkileşimi Projesi
 
-Bu proje lisans İnsan - Bilgisayar Etkileşimi dersi kapsamında hazırlanan;
+Bu proje lisans "İnsan - Bilgisayar Etkileşimi" dersi kapsamında hazırlanan;
 Genel kullanıcıların hastane randevusunu hızlı, hatasız ve randevunun alındığından emin
-olarak oluşturup takip edebileceği, mobil öncelikli bir web uygulaması.
+olarak oluşturup takip edebileceği, mobil öncelikli bir web uygulamasıdır.
 
 ## Çalıştırma
 
