@@ -23,7 +23,9 @@
   var F = M.format;
   var T = M.text;
 
-  var UNDO_MS = 5000;     // F-04: iptalden sonra geri alma süresi
+  // F-04: "Geri al" ilk sürümde 5 saniye görünüyordu. Uygulama testinde U1 bu süreye
+  // yetişemedi; süre sınırı kaldırıldı. Bildirim, kullanıcı Randevularım ekranından
+  // ayrılana kadar görünür (ISO 9241-110 kontrol edilebilirlik, WCAG 2.2.1).
   var LOADING_MS = 500;   // P-01: bu süreyi aşan işlemlerde yüklenme göstergesi
 
   var app, live;
@@ -491,15 +493,7 @@
     btn.innerHTML = '<span class="spinner" aria-hidden="true"></span>İptal ediliyor…';
     api.cancelAppointment(id).then(function (res) {
       if (!res.ok) { closeDialog(); return fatal(res.error); }
-      if (state.undo) clearTimeout(state.undo.timer);
-      state.undo = {
-        id: id,
-        timer: setTimeout(function () {
-          state.undo = null;
-          var sb = app.querySelector(".snackbar");
-          if (sb) sb.remove();
-        }, UNDO_MS)
-      };
+      state.undo = { id: id };
       go("#/randevular", true);
       announce(T.cancelled + " Geri almak için Geri al düğmesini kullanabilirsiniz.");
     });
@@ -508,7 +502,6 @@
   function undoCancel() {
     if (!state.undo) return;
     var id = state.undo.id;
-    clearTimeout(state.undo.timer);
     state.undo = null;
     api.restoreAppointment(id).then(function (res) {
       announce(res.ok ? T.restored : T.restoreFailed);
@@ -566,6 +559,7 @@
     closeDialog();
     var token = ++renderToken;
     var r = parseHash(), p = r.parts;
+    if (state.undo && p[0] !== "randevular") state.undo = null; // ekrandan çıkınca geri alma kapanır
     switch (p[0]) {
       case undefined: return home(token);
       case "brans": return branchScreen(token);
