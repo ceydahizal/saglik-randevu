@@ -57,10 +57,14 @@ Parametreler işlendikten sonra adres çubuğundan kendiliğinden silinir.
 | v3 | Ana ekranda en yakın 3 randevu gösteriliyor; kartlarda “Görüntüle veya iptal et” yazısı var | U2 iptal edeceği randevuyu ana ekranda aradı; U2 ve U3 karta dokunmayı yardımla buldu |
 | v3 | 08'de iptal ve takvim butonları, 04-B ve 05-B'de seçenekler, iptal sonrası “Geri al” ekranın altından mesajın hemen altına alındı | U3 alttaki buton ve bildirimleri yönlendirmeyle buldu (“Ne yapacağım şimdi?”) |
 | v3 | Çakışma mesajının başlığı “Randevunuz oluşturulamadı” oldu, açıklama “Lütfen aşağıdan başka bir saat seçin” ile bitiyor | U3 eski başlığı görünce randevuyu aldığını sandı |
+| v3.1 | “Geri al” butonu “Randevuyu geri getir” oldu, açıklama yeniden randevu almaya gerek olmadığını söylüyor | U4 iptalden sonra “Şimdi yeniden mi randevu alayım?” dedi; U6 ve U7 yeniden randevu almaya çalıştı; 7 katılımcıdan 5'i geri almayı yardımsız yapamadı |
+| v3.1 | “Onayla” butonu “Randevuyu onayla” oldu | U4 son adımda “‘Randevu al’ diyorum, ‘Onayla’ mı diyeyim?” diye sordu |
+| v3.1 | Randevu geri getirilince ekranda “Randevunuz geri getirildi” onayı ve randevunun bilgisi görünüyor | U5 geri aldıktan sonra “Geri aldı mı?” diye emin olamadı |
 
 ## Bilinen sınırlamalar
 
 - v3 değişiklikleri ikincil grupla (yaşlı kullanıcılar) yeniden test edilemedi; yalnızca birincil grupla test edildi.
+- v3.1, sunum tarihinden önce kullanıcılarla test edilemedi; bir sonraki test turunda doğrulanacak.
 
 - Gerçek bir hastane sistemine bağlı değildir; doktor ve boş saat bilgileri örnek veridir.
 - Uygulamanın “bugün” kabul ettiği tarih **27 Ekim 2026** olarak sabitlenmiştir; tasarım ve test görevlerindeki tarihlerle tutarlılık için.

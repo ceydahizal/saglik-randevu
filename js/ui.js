@@ -34,6 +34,7 @@
     selection: null,     // { doctorId, doctorName, branchId, branchName, hospital, date, time }
     query: "",
     undo: null,          // { id, timer }
+    restored: null,      // v3.1: geri getirilen randevu (görünür onay için)
     flash: null,         // bir sonraki ekranda gösterilecek bilgi
     modalReturnFocus: null
   };
@@ -362,7 +363,8 @@
     if (!s || !s.time) return go("#/brans", true);
     var back = "#/tarih/" + s.doctorId + "?gun=" + s.date;
     var html = header({ back: back, title: "Randevuyu Onaylayınız", step: "Adım 4/4" });
-    var bottom = '<button type="button" class="btn btn-primary" data-action="confirm">Onayla</button>';
+    // v3.1: U4 "Randevu al diyorum, Onayla mı diyeyim?" diye sordu; buton ne olacağını söylüyor
+    var bottom = '<button type="button" class="btn btn-primary" data-action="confirm">Randevuyu onayla</button>';
 
     if (problem && problem.code === "SLOT_TAKEN") {
       var m = M.errorMessage(problem, { time: s.time });
@@ -434,13 +436,22 @@
       if (!res.ok) return fatal(res.error);
       var past = tab === "gecmis";
       var items = past ? res.data.past : res.data.upcoming;
-      // v3: "Geri al" bildirimi ekranın altında fark edilmedi (U3); listenin üstünde gösteriliyor
+      // v3: "Geri al" bildirimi ekranın altında fark edilmedi (U3); listenin üstünde gösteriliyor.
+      // v3.1: U4 iptalden sonra "yeniden mi randevu alayım?" dedi; soyut "Geri al" yerine
+      // sonucu söyleyen "Randevuyu geri getir" kullanılıyor.
       var undoBanner = state.undo
         ? '<section class="banner banner-done" role="status"><div><h2 class="banner-title">' + T.cancelled + '</h2>' +
-          '<p>Yanlışlıkla iptal ettiyseniz geri alabilirsiniz.</p>' +
-          '<div class="banner-actions"><button type="button" class="btn btn-primary btn-small" data-action="undo">Geri al</button></div></div></section>'
+          '<p>Fikrinizi değiştirdiyseniz yeniden randevu almanıza gerek yok, aynı randevuyu geri getirebilirsiniz.</p>' +
+          '<div class="banner-actions"><button type="button" class="btn btn-primary btn-small" data-action="undo">Randevuyu geri getir</button></div></div></section>'
         : "";
-      var html = header({ back: "#/", title: "Randevularım" }) + undoBanner +
+      // v3.1: U5 geri aldıktan sonra "Geri aldı mı?" diye emin olamadı; sonuç ekranda da yazıyor.
+      var r = state.restored;
+      var restoredBanner = r
+        ? '<section class="banner banner-done" role="status"><span class="alert-icon alert-ok" aria-hidden="true">✓</span><div>' +
+          '<h2 class="banner-title">' + T.restored + '</h2>' +
+          '<p>' + esc(r.branchName) + ', ' + esc(F.dateTime(r.date, r.time)) + ' randevunuz yeniden aşağıdaki listede.</p></div></section>'
+        : "";
+      var html = header({ back: "#/", title: "Randevularım" }) + undoBanner + restoredBanner +
         '<div class="tabs" role="tablist" aria-label="Randevu listesi">' +
         '<button type="button" role="tab" class="tab' + (past ? "" : " is-on") + '" aria-selected="' + !past + '" data-action="tab" data-tab="yaklasan">Yaklaşan</button>' +
         '<button type="button" role="tab" class="tab' + (past ? " is-on" : "") + '" aria-selected="' + past + '" data-action="tab" data-tab="gecmis">Geçmiş</button>' +
@@ -508,8 +519,9 @@
     api.cancelAppointment(id).then(function (res) {
       if (!res.ok) { closeDialog(); return fatal(res.error); }
       state.undo = { id: id };
+      state.restored = null;
       go("#/randevular", true);
-      announce(T.cancelled + " Geri almak için Geri al düğmesini kullanabilirsiniz.");
+      announce(T.cancelled + " Fikrinizi değiştirdiyseniz Randevuyu geri getir düğmesini kullanabilirsiniz.");
     });
   }
 
@@ -518,6 +530,7 @@
     var id = state.undo.id;
     state.undo = null;
     api.restoreAppointment(id).then(function (res) {
+      if (res.ok) state.restored = res.data.appointment;
       announce(res.ok ? T.restored : T.restoreFailed);
       route();
     });
@@ -574,6 +587,7 @@
     var token = ++renderToken;
     var r = parseHash(), p = r.parts;
     if (state.undo && p[0] !== "randevular") state.undo = null; // ekrandan çıkınca geri alma kapanır
+    if (state.restored && p[0] !== "randevular") state.restored = null;
     switch (p[0]) {
       case undefined: return home(token);
       case "brans": return branchScreen(token);

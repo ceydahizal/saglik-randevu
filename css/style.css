@@ -125,6 +125,7 @@ h1[tabindex="-1"]:focus { outline: none; }
 .actions { margin-top: 16px; }
 .actions .btn-secondary { margin-top: 10px; }
 .banner-done { background: #e8f3f4; border: 2px solid var(--primary); }
+.alert-icon.alert-ok { background: var(--primary); }
 
 .tag {
   display: inline-block; margin-left: 8px; padding: 1px 8px; border-radius: 999px;

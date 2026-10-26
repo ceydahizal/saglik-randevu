@@ -78,7 +78,7 @@
       createdNote: "Randevunuz Randevularım bölümüne eklendi.",
       cancelNote: "İptalden sonra kısa süre geri alabilirsiniz.",
       cancelled: "Randevunuz iptal edildi.",
-      restored: "Randevunuz geri alındı.",
+      restored: "Randevunuz geri getirildi.",
       restoreFailed: "Randevu geri alınamadı: bu saat başka biri tarafından alınmış.",
       calendarDone: "Takvim dosyası indirildi. Dosyayı açarak randevuyu takviminize ekleyebilirsiniz.",
       timeUpdated: function (t) { return "Saat " + t + " olarak güncellendi. Bilgileri kontrol edip onaylayınız."; },
